@@ -208,6 +208,7 @@ cfg_fs! {
 
 impl BlockingPool {
     pub(crate) fn new(builder: &Builder, thread_cap: usize) -> BlockingPool {
+        // oneshot
         let (shutdown_tx, shutdown_rx) = shutdown::channel();
         let keep_alive = builder.keep_alive.unwrap_or(KEEP_ALIVE);
 
@@ -292,7 +293,6 @@ impl fmt::Debug for BlockingPool {
 }
 
 // ===== impl Spawner =====
-
 impl Spawner {
     #[track_caller]
     pub(crate) fn spawn_blocking<F, R>(&self, rt: &Handle, func: F) -> JoinHandle<R>

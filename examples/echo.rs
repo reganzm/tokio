@@ -54,6 +54,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         // Essentially here we're executing a new task to run concurrently,
         // which will allow all of our clients to be processed concurrently.
 
+        // spawn function generate task and add to queue to scheduler
         tokio::spawn(async move {
             let mut buf = vec![0; 1024];
 

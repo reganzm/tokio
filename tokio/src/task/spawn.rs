@@ -167,8 +167,10 @@ cfg_rt! {
     where
         F: Future + Send + 'static,
         F::Output: Send + 'static,
-    {
+    {   
+        // calculate Future size
         let fut_size = std::mem::size_of::<F>();
+        // alloc memeory on heap, default stack size = 16kb
         if fut_size > BOX_FUTURE_THRESHOLD {
             spawn_inner(Box::pin(future), SpawnMeta::new_unnamed(fut_size))
         } else {
@@ -183,7 +185,8 @@ cfg_rt! {
         T::Output: Send + 'static,
     {
         use crate::runtime::{context, task};
-
+        // condition compile
+        // surpport aarch64/x86/x86_64
         #[cfg(all(
             tokio_unstable,
             tokio_taskdump,
@@ -197,8 +200,10 @@ cfg_rt! {
         ))]
         let future = task::trace::Trace::root(future);
         let id = task::Id::next();
+        // use Future to create a task with future,id,kind,meta
         let task = crate::util::trace::task(future, "task", meta, id.as_u64());
-
+        
+        // handle.spawn a task and return JoinHandle
         match context::with_current(|handle| handle.spawn(task, id)) {
             Ok(join_handle) => join_handle,
             Err(e) => panic!("{}", e),

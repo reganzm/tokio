@@ -1513,7 +1513,7 @@ cfg_rt_multi_thread! {
             use crate::loom::sys::num_cpus;
             use crate::runtime::{Config, runtime::Scheduler};
             use crate::runtime::scheduler::{self, MultiThread};
-
+            // threads count eque to cpus cores
             let core_threads = self.worker_threads.unwrap_or_else(num_cpus);
 
             let (driver, driver_handle) = driver::Driver::new(self.get_cfg(core_threads))?;
